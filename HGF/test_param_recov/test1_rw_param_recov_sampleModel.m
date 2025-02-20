@@ -57,11 +57,11 @@ sel = ~(fitted_ze < exp(2.1) & fitted_ze > exp(1.9));
 
 figure;
 subplot(1,2,1)
-scat_ref_corr(log(sim_ze(sel)),log(fitted_ze(sel)))
+pal_scat_ref_corr(log(sim_ze(sel)),log(fitted_ze(sel)))
 xlabel('simulated')
 ylabel('fitted')
 subplot(1,2,2)
-scat_ref_corr(sim_al(sel),fitted_al(sel))
+pal_scat_ref_corr(sim_al(sel),fitted_al(sel))
 xlabel('simulated')
 ylabel('fitted')
 set(gcf,'Position',[450 494 639 278])

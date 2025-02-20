@@ -1,4 +1,4 @@
-function scat_ref_corr(x,y)
+function pal_scat_ref_corr(x,y)
 
 scatter(x,y, [], 'blue', 'filled', 'MarkerFaceAlpha', 0.5)
 
