@@ -3,7 +3,7 @@ addpath(genpath('../'))
 u = load('example_binary_input.txt');
 
 %% settings
-nsims = 500;
+nsims = 100;
 %u = [u;u;u;u;u];
 
 %% configure the priors
@@ -16,8 +16,9 @@ obs_config = tapas_unitsq_sgm_config();
 % obs_config.logzesa = 3;
 % obs_config.logzemu = 1;
 
-% prior changes:
-prc_config.logitalsa = 0.5;
+% priors:
+prc_config.logitalmu = 0;
+prc_config.logitalsa = 1;
 obs_config.logzesa = 1;
 obs_config.logzemu = 1;
 
@@ -82,4 +83,5 @@ title(corr(sim_al,fitted_al))
 xlabel('simulated')
 ylabel('fitted')
 refline([1 0])
+set(gcf,'Position',[450 494 639 278])
 
