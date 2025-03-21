@@ -22,7 +22,7 @@ c.predorpost = 1; % Predictions
 %c.predorpost = 2; % Posteriors
 
 % Model name
-c.model = 'softmax';
+c.model = 'tapas_softmax'; %Bowen Xiao 20250321; to fix bug in tapas_sampleModel 122 obs_fun no tapas_ prefix
 
 % Sufficient statistics of Gaussian parameter priors
 
