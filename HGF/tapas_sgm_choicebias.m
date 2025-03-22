@@ -1,7 +1,7 @@
 function [logp, yhat, res] = tapas_sgm_choicebias(r, infStates, ptrans)
 % Calculates the log-probability of response y=1 for sigmoid response
-% function with choice bias
-%
+% function with a choice bias term
+% 
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
 % modified by Bowen Xiao 2025 from tapas_unitsq_sgm
@@ -19,6 +19,7 @@ end
 
 % Transform zeta to its native space
 ze = exp(ptrans(1));
+bias = ptrans(2);
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
@@ -33,18 +34,26 @@ x(r.irr) = [];
 y = r.y(:,1);
 y(r.irr) = [];
 
-% Avoid any numerical problems when taking logarithms close to 1
-logx = log(x);
-log1pxm1 = log1p(x-1);
-logx(1-x<1e-4) = log1pxm1(1-x<1e-4);
-log1mx = log(1-x);
-log1pmx = log1p(-x);
-log1mx(x<1e-4) = log1pmx(x<1e-4); 
+% logit transform x from 0~1 to -Inf~Inf; can be Inf but will be sorted in
+% sgm, since tapas_sgm(Inf, 1) = 1 and tapas_sgm(-Inf,1) = 0
+% ensures when x=0.5, p(choice) is also 0.5
+x_real = log(x./(1-x));
+
+% the sigmoid function:
+p_y1 = tapas_sgm(ze * (x_real+bias), 1);
+
+% deal with numerical issues: if close to 0 or 1, turn into eps or 1-eps
+% p_y1((p_y1 - 0) < eps) = eps; 
+% p_y1((1 - p_y1) < eps) = 1-eps;
+p_y1 = min(max(p_y1, eps), 1-eps); % does the two lines above more efficiently; tic toc verified
+
+% get probability of each resp based on if y==1 or not
+p_choice = p_y1 .* (y==1) + (1-p_y1) .* (y~=1); 
 
 % Calculate log-probabilities for non-irregular trials
 reg = ~ismember(1:n,r.irr);
-logp(reg) = y.*ze.*(logx -log1mx) +ze.*log1mx -log((1-x).^ze +x.^ze);
+logp(reg) = log(p_choice); 
 yhat(reg) = x;
-res(reg) = (y-x)./sqrt(x.*(1-x));
+res(reg) = -logp(reg); % not sure what to do about this -- copied _softmax_...
 
 return;

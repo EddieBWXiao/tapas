@@ -1,8 +1,9 @@
 function [y, prob] = tapas_sgm_choicebias_sim(r, infStates, p)
-% Simulates observations from a Bernoulli distribution
+% Simulates observations from a Bernoulli distribution for a sigmoid function with bias
 %
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Modified Bowen Xiao 2025 from unitsq_sgm 
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -15,8 +16,9 @@ if r.c_obs.predorpost == 2
     pop = 3; % Alternative: posteriors
 end
 
-% Inverse decision temperature zeta
-ze = p;
+% params
+ze = p(1); %inverse temperature
+bias = p(2); % bias term;
 
 % Assumed structure of infStates:
 % dim 1: time (ie, input sequence number)
@@ -24,10 +26,11 @@ ze = p;
 % dim 3: 1: muhat, 2: sahat, 3: mu, 4: sa
 
 % Belief trajectories at 1st level
-states = squeeze(infStates(:,1,pop));
+x = squeeze(infStates(:,1,pop));
 
-% Apply the unit-square sigmoid to the inferred states
-prob = states.^ze./(states.^ze+(1-states).^ze);
+% Apply the sigmoid function to the inferred states
+x_real = log(x./(1-x)); %IMPORTANT: transform probability to logit space
+prob = tapas_sgm(ze * (x_real+bias), 1);
 
 % Initialize random number generator
 if isnan(r.c_sim.seed)

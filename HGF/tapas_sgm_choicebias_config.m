@@ -5,11 +5,19 @@ function c = tapas_sgm_choicebias_config
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% The sigmoid curve
-% p(x) = 1./(1+exp(be*x)) 
+% The sigmoid curve:
+% p(x) = 1./(1+exp(ze*x)) 
+% 
+% If x is logit(m), with m being a probability... then this should be
+% equivalent to the unit-square sigmoid over m
 %
-% be: inverse temperature
-%
+% With option to include choice bias in logit space:
+% decision_var = logit(m) + bias
+% p(m) = 1./(1+exp(ze*decision_var)) 
+% 
+% ze: inverse temperature zeta, scaling the decision_var in logit space
+% bias: a response bias term in logit space, for choice options not side
+% 
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
 % Modified Bowen Xiao 2025 from unitsq_sgm
@@ -27,28 +35,33 @@ c.predorpost = 1; % Predictions
 %c.predorpost = 2; % Posteriors
 
 % Model name
-c.model = 'tapas_unitsq_sgm';
+c.model = 'tapas_sgm_choicebias';
 
 % Sufficient statistics of Gaussian parameter priors
 
-% Zeta
-c.logzemu = log(48);
+% Zeta % standard normal used as default, unlike unitsq_sgm
+c.logzemu = 0;
 c.logzesa = 1;
+% Bias
+c.biasmu = 0;
+c.biassa = 1;
 
 % Gather prior settings in vectors
 c.priormus = [
     c.logzemu,...
+    c.biasmu
          ];
 
 c.priorsas = [
     c.logzesa,...
+    c.biassa
          ];
 
 % Model filehandle
-c.obs_fun = @tapas_unitsq_sgm;
+c.obs_fun = @tapas_sgm_choicebias;
 
 % Handle to function that transforms observation parameters to their native space
 % from the space they are estimated in
-c.transp_obs_fun = @tapas_unitsq_sgm_transp;
+c.transp_obs_fun = @tapas_sgm_choicebias_transp;
 
 return;

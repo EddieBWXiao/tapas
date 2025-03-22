@@ -10,5 +10,6 @@ function pstruct = tapas_sgm_choicebias_namep(pvec)
 pstruct = struct;
 
 pstruct.ze = pvec(1);
+pstruct.bias = pvec(2);
 
 return;
