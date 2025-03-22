@@ -10,7 +10,7 @@ nsims = 100;
 
 %% model
 prc_config = tapas_ehgf_binary_config();
-obs_config = tapas_unitsq_sgm_config();
+obs_config = tapas_sgm_choicebias_config();
 %prc_params = {};
 
 %% get bopars on input
@@ -25,8 +25,7 @@ bopars = tapas_fitModel([],...
 
 %prc_config.priormus = bopars.p_prc.p; %nope this won't update with align_priors?
 prc_config.ommu = bopars.p_prc.om;
-prc_config.omsa = [NaN 4 10]; %tighten priors if needed; 16 for hgf 4 for ehgf
-    %tried increasing sa for om3 to see if less shrinkage
+prc_config.omsa = [NaN 4 4]; %tighten priors if needed; 16 for hgf 4 for ehgf
 
 obs_config.logzemu = 0;
 obs_config.logzesa = 1;
@@ -102,6 +101,8 @@ end
 %% plotting
 fitted_ze = cellfun(@(x) x.p_obs.p(1),fitted);
 sim_ze = cellfun(@(x) x.p_obs.p(1),sims);
+fitted_bias = cellfun(@(x) x.p_obs.p(2),fitted);
+sim_bias = cellfun(@(x) x.p_obs.p(2),sims);
 
 sim_om2 = cellfun(@(x) x.p_prc.om(2),sims);
 fitted_om2 = cellfun(@(x) x.p_prc.om(2),fitted);
@@ -121,6 +122,10 @@ xlabel('simulated')
 ylabel('fitted')
 subplot(2,2,3)
 pal_scat_ref_corr(sim_om3(sel),fitted_om3(sel))
+xlabel('simulated')
+ylabel('fitted')
+subplot(2,2,4)
+pal_scat_ref_corr(sim_bias(sel),fitted_bias(sel))
 xlabel('simulated')
 ylabel('fitted')
 set(gcf,'Position',[450 296 519 476])
