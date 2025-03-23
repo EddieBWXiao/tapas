@@ -6,7 +6,7 @@ u = load('example_binary_input.txt');
 %u = repmat(u,[3,1]); %increase length;
     % note that _hgf_, not _ehgf_, seems to fail more if u lengthened...
 
-nsims = 100;
+nsims = 10;
 
 %% model
 prc_config = tapas_ehgf_binary_config();
@@ -99,34 +99,10 @@ if i <= nsims
 end
 
 %% plotting
-fitted_ze = cellfun(@(x) x.p_obs.p(1),fitted);
-sim_ze = cellfun(@(x) x.p_obs.p(1),sims);
-fitted_bias = cellfun(@(x) x.p_obs.p(2),fitted);
-sim_bias = cellfun(@(x) x.p_obs.p(2),sims);
+pal_tapas_plotParRecAll(sims, fitted, ...
+  {'p_obs.p(1)', 'p_prc.om(2)', 'p_prc.om(3)', 'p_obs.p(2)'}, ...
+  {'logspace \zeta', '\omega_2', '\omega_3', 'choice bias'}, ...
+  {@log, [], [], []});
 
-sim_om2 = cellfun(@(x) x.p_prc.om(2),sims);
-fitted_om2 = cellfun(@(x) x.p_prc.om(2),fitted);
-sim_om3 = cellfun(@(x) x.p_prc.om(3),sims);
-fitted_om3 = cellfun(@(x) x.p_prc.om(3),fitted);
-
-sel = true(size(fitted_ze));
-
-figure;
-subplot(2,2,1)
-pal_scat_ref_corr(log(sim_ze(sel)),log(fitted_ze(sel)))
-xlabel('simulated')
-ylabel('fitted')
-subplot(2,2,2)
-pal_scat_ref_corr(sim_om2(sel),fitted_om2(sel))
-xlabel('simulated')
-ylabel('fitted')
-subplot(2,2,3)
-pal_scat_ref_corr(sim_om3(sel),fitted_om3(sel))
-xlabel('simulated')
-ylabel('fitted')
-subplot(2,2,4)
-pal_scat_ref_corr(sim_bias(sel),fitted_bias(sel))
-xlabel('simulated')
-ylabel('fitted')
-set(gcf,'Position',[450 296 519 476])
+set(gcf, 'Position', [450 296 519 476])
 

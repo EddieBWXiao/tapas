@@ -100,28 +100,11 @@ if i <= nsims
 end
 
 %% plotting
-fitted_ze = cellfun(@(x) x.p_obs.p(1),fitted);
-sim_ze = cellfun(@(x) x.p_obs.p(1),sims);
-
-sim_om2 = cellfun(@(x) x.p_prc.om(2),sims);
-fitted_om2 = cellfun(@(x) x.p_prc.om(2),fitted);
-sim_om3 = cellfun(@(x) x.p_prc.om(3),sims);
-fitted_om3 = cellfun(@(x) x.p_prc.om(3),fitted);
-
-sel = true(size(fitted_ze));
-
 figure;
 subplot(2,2,1)
-pal_scat_ref_corr(log(sim_ze(sel)),log(fitted_ze(sel)))
-xlabel('simulated')
-ylabel('fitted')
+pal_tapas_plotParRec(sims, fitted, 'p_obs.p(1)', 'logspace zeta (\zeta)', @log);
 subplot(2,2,2)
-pal_scat_ref_corr(sim_om2(sel),fitted_om2(sel))
-xlabel('simulated')
-ylabel('fitted')
+pal_tapas_plotParRec(sims, fitted, 'p_prc.om(2)', '\omega2');
 subplot(2,2,3)
-pal_scat_ref_corr(sim_om3(sel),fitted_om3(sel))
-xlabel('simulated')
-ylabel('fitted')
-set(gcf,'Position',[450 296 519 476])
-
+pal_tapas_plotParRec(sims, fitted, 'p_prc.om(3)', '\omega3');
+set(gcf, 'Position', [450 296 519 476])
