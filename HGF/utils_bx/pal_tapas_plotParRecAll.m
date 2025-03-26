@@ -2,8 +2,8 @@ function pal_tapas_plotParRecAll(sims, fitted, params, param_names, transforms)
 % PAL_TAPAS_PLOTPARRECALL Creates a multi-panel figure with parameter recovery plots
 %
 % Inputs:
-%   sims - Cell array of simulated parameter structures
-%   fitted - Cell array of fitted parameter structures 
+%   sims - Cell array of simulated tapas structures
+%   fitted - Cell array of fitted tapas structures 
 %   params - Cell array of parameter path strings (e.g., {'p_obs.p(1)', 'p_prc.om(2)'})
 %   param_names - (Optional) Cell array of parameter names to show on axes
 %   transforms - (Optional) Cell array of function handles for parameter transformations
