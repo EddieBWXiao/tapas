@@ -1,5 +1,8 @@
 function pal_scat_ref_corr(x,y)
 
+x = x(:);
+y = y(:);
+
 scatter(x,y, [], 'blue', 'filled', 'MarkerFaceAlpha', 0.5)
 
 corr_string = sprintf("Pearson's r = %.3f\nSpearman's \\rho = %.3f\nKendall's \\tau = %.3f", ...
