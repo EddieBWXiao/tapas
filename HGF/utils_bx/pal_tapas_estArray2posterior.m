@@ -1,17 +1,12 @@
 function posterior = pal_tapas_estArray2posterior(ests)
 
-% WORK-IN-PROGRESS
-% from an array of est structs, get group-level posterior of parameters
+% from a cell array of est structs, get group-level posterior of parameters
+% Bowen Xiao 2025
 
 % steps:
 % use pal_tapas_findFreePars(r)
 % get vec of mean and variance from ptrans and pvec
-
-% (okay maybe from this step onwards we will make another func...)
-% assign value to ptrans in a config that we will use
-% turn ptrans into pvec? (wait, priormus are ptrans right??)
-% tapas_align_priors_fields(cfg) %hope this func works with no bug
-% then the new cfg can be used for par rec and other stuff
+% turn ptrans into pvec? (wait, priormus are ptrans right?? so maybe redundant)
 
 [prc_ind, obs_ind, n_par, par_names] = cellfun(@(x)pal_tapas_findFreePars(x),...
     ests,'UniformOutput',false);
@@ -35,6 +30,8 @@ end
 posterior.prc_ind = prc_ind_mat(1,:);
 posterior.obs_ind = obs_ind_mat(1,:);
 posterior.free_pars = par_names_extracted{1};
+posterior.c_prc = ests{1}.c_prc;
+posterior.c_obs = ests{1}.c_obs;
 
 %% actually extract the transformed params; take mean and SD
 posterior.prc_ptrans = cell2mat(cellfun(@(x) x.p_prc.ptrans, ests, 'UniformOutput',false));
