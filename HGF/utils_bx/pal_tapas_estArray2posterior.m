@@ -8,6 +8,9 @@ function posterior = pal_tapas_estArray2posterior(ests)
 % get vec of mean and variance from ptrans and pvec
 % turn ptrans into pvec? (wait, priormus are ptrans right?? so maybe redundant)
 
+% important: ests should be in a column; only one dimension
+ests = ests(:);
+
 [prc_ind, obs_ind, n_par, par_names] = cellfun(@(x)pal_tapas_findFreePars(x),...
     ests,'UniformOutput',false);
 
@@ -16,8 +19,13 @@ function posterior = pal_tapas_estArray2posterior(ests)
 prc_ind_mat = cell2mat(prc_ind);
 obs_ind_mat = cell2mat(obs_ind);
 n_par_mat = cell2mat(n_par);
+
 % Check if all rows are equal for each matrix
-prc_rows_equal = all(all(prc_ind_mat == prc_ind_mat(1,:), 2));
+if ~isempty(prc_ind_mat) % note that some prc models may have no free pars
+    prc_rows_equal = all(all(prc_ind_mat == prc_ind_mat(1,:), 2));
+else
+    prc_rows_equal = true;
+end
 obs_rows_equal = all(all(obs_ind_mat == obs_ind_mat(1,:), 2));
 n_par_rows_equal = all(all(n_par_mat == n_par_mat(1,:), 2));
 par_names_extracted = cellfun(@(x) x{1}, par_names, 'UniformOutput', false);
@@ -27,8 +35,19 @@ if any([~prc_rows_equal,~obs_rows_equal,~n_par_rows_equal,~par_names_equal])
 end
 
 %% record the free param indices
-posterior.prc_ind = prc_ind_mat(1,:);
-posterior.obs_ind = obs_ind_mat(1,:);
+if ~isempty(prc_ind_mat) % note that some prc models may have no free pars
+    posterior.prc_ind = prc_ind_mat(1,:);
+else
+    disp('Note: No free parameters for the perceptual model. prc_ind empty')
+    posterior.prc_ind = [];
+end
+if ~isempty(obs_ind_mat) % same if for obs
+    posterior.obs_ind = obs_ind_mat(1,:);
+else
+    disp('Note: No free parameters for the perceptual model. obs_ind empty')
+    posterior.obs_ind = [];    
+end
+
 posterior.free_pars = par_names_extracted{1};
 posterior.c_prc = ests{1}.c_prc;
 posterior.c_obs = ests{1}.c_obs;
