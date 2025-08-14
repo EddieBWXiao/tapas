@@ -4,7 +4,15 @@ function [expnms_prc, expnms_obs] = pal_tapas_getParNames(r, auto_levelSuffix)
 % Modified from tapas_fit_plotCorr by Bowen Xiao, Jun 2025
 % original script does not seem to handle the indexing? (e.g., om2 and om3)
 % Fixed in collaboration with Claude
-
+% 
+% INPUT: 
+% r: est from fitModel
+% auto_levelSuffix: logical; if true, add level (l) as suffix; if false, will have duplicate param names
+%
+% OUTPUT:
+% expnms_prc/expnms_obs: cell array of strings for parameter names from the
+% field names of the p_prc and p_obs
+%
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
 %

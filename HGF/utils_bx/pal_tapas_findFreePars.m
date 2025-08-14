@@ -1,7 +1,19 @@
 function [prc_ind, obs_ind, n_par, par_names, n_prc_pars, n_obs_pars] = pal_tapas_findFreePars(r)
 
-% find the free parameters in an est struct
-% Modified from tapas_fit_plotCorr by Bowen Xiao, Jun 2025
+% find the free parameters in an est struct by looking at priorsas
+% Copied out from tapas_fit_plotCorr by Bowen Xiao, Jun 2025
+% added pal_tapas_getParNames for retrieving parameter names (par_names)
+%
+% INPUT:
+% r: est from fitModel
+%
+% OUTPUT:
+% prc/obs_ind: index for the positions of the free parameters in the c_prc/obs; numeric not logical
+% n_par: total number of free parameters
+% par_names: names of parameters from field names of the p_prc and p_obs;
+    % (parameters with multiple levels will have the level as suffix)
+% n_prc/obs_pars: number of free parameters, separate for the other models
+%
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
 %

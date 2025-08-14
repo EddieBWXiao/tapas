@@ -1,5 +1,10 @@
 function pal_scat_ref_corr(x,y)
 
+% Bowen Xiao 2024
+% scatter plot and title with three zeroth-order correlations between x and y
+% suitable for parameter recovery and model-data correlations, which are
+% expected to fall on the reference line of y=x (which is always added)
+
 x = x(:);
 y = y(:);
 
