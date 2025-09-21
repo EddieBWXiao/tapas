@@ -54,7 +54,9 @@ fit1 = tapas_fitModel(sim1.y,...
 
 % visualise the learning model
 tapas_hgf_binary_plotTraj(sim1)
+sgtitle('Simulation')
 tapas_hgf_binary_plotTraj(fit1)
+sgtitle('Fit')
 
 %% loop for recovery
 % preallocate

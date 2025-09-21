@@ -1,4 +1,4 @@
-function pal_tapas_fit_plotChoiceRT_hess(r, usedLogRTms, nsims)
+function pal_tapas_fit_plotChoiceLogRT_hess(r, nsims)
 % Plots the choice probabilities and reaction times for the fitted model
 % Include sampling priors from the Hessian, plotting the trialwise prctile
 % alongside the sim from MAP, mimicking the HDI in rstan ppc
@@ -11,10 +11,6 @@ function pal_tapas_fit_plotChoiceRT_hess(r, usedLogRTms, nsims)
 % next step: use Hess & potentially create the credible interval for RT
 
 %% default
-if ~exist('usedLogRTms','var')
-    usedLogRTms = false;
-end
-
 if ~exist('nsims','var')
     % Number of simulations for RT predictions
     nsims = 100;
@@ -65,13 +61,6 @@ for j = 1:nsims
 end
 
 % Deal with logRTms
-if usedLogRTms
-    rt_sims = exp(rt_sims)/1000;
-    rt_sims_hess = exp(rt_sims_hess)/1000;
-    rt_data = exp(rt_data)/1000;
-    yhat(:,2) = exp(yhat(:,2))/1000;
-end
-
 hess_lb = quantile(rt_sims_hess, 0.05, 2);
 hess_ub = quantile(rt_sims_hess, 0.95, 2);
 
@@ -113,10 +102,10 @@ fill([ts(2:end), fliplr(ts(2:end))], [(hess_ub)', fliplr((hess_lb)')], ...
 hold all;
 plot(ts(2:end), rt_data, 'k-', 'LineWidth', 1);
 plot(ts(2:end), mean(rt_sims, 2), 'r', 'LineWidth', 2);
-%plot(ts(2:end), yhat(:, 2), 'b--', 'LineWidth', 2);
+plot(ts(2:end), yhat(:, 2), 'b--', 'LineWidth', 2);
 xlim([0 ts(end)]);
 title('Reaction times: actual RT (thin black), mean sim RT (red), analytic RT (blue dashed), 90% credible interval from Hessian samples (blue shade)', 'FontWeight', 'bold');
-ylabel('Reaction time (s)');
+ylabel('Log Reaction Time (ms)');
 xlabel({'Trial number', ' '}); % A hack to get the relative subplot sizes right
 hold off;
 
