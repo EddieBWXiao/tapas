@@ -79,6 +79,7 @@ output.hessian_fminunc = hessian; %store the original hessian as a copy
 
 % Additional check on the Hessian (Bowen Xiao 20241205)
 if check_hessian && ~hessian_invalid
+    
     % When the T_opt is used to compute the LME...
     % tapas_fitModel catches Hessians that are not positive semi-definite
     % and uses tapas_nearest_psd, which checks the eigenvalues
@@ -93,6 +94,18 @@ if check_hessian && ~hessian_invalid
         disp('Warning: det(H)<0; Hessian not positive semi-definite. If final LME = -Inf, increase nRandInit.')
         fval = Inf;
     end
+    
+    % Additional check: will tapas_nearest_psd(Sigma) fail in tapas_fitModel?
+    % nearest PSD could fail to reach ~any(eig(X)<0), likely due to some numerical precision issue
+    % causes infinite loop during LME calculation
+    n_while_loops = 1e6;
+    if ~internal_nearest_psd_available(T_opt, n_while_loops)
+        disp('Infinite loop possible for inverse Hessian')
+        disp('The offending inverse Hessian:')
+        disp(T_opt)
+        error('nearest_psd fails to find solution after %i iterations', n_while_loops)
+    end
+    
 end
 
 % Collect results
@@ -103,4 +116,45 @@ if ~isempty(T_opt)
 end
 optim.iter = output; % only field to store other optimiser-related info
 
-return;
+end
+function success = internal_nearest_psd_available(X, n_iter)
+% Finds the nearest positive semi-defnite matrix to X
+% Modified by Bowen Xiao 2025 to check for infinite loops
+% 
+% --------------------------------------------------------------------------------------------------
+% Copyright (C) 2020 Christoph Mathys, TNU, UZH & ETHZ
+%
+% This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
+% Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
+% (either version 3 or, at your option, any later version). For further details, see the file
+% COPYING or <http://www.gnu.org/licenses/>.
+%
+% Input: 
+%        X - a square matrix; 
+%        n_iter - number of while loops to use for finding nearest PSD
+% 
+%
+% Output: success - whether a nearest positive semi-definite matrix to input X was found
+
+% Ensure symmetry
+X = (X' + X)./2;
+
+% Continue until X is positive semi-definite
+attempts = 0;
+while any(eig(X) < 0) && attempts < n_iter
+    % V: right eigenvectors, D: diagonalized X (X*V = V*D <=> X = V*D*V')
+    [V, D] = eig(X);
+    % Replace negative eigenvalues with 0 in D
+    D = max(0, D);
+    % Transform back
+    X = V*D*V';
+    % Ensure symmetry
+    X = (X' + X)./2;
+    % Count attempts
+    attempts = attempts + 1;
+end
+
+% check whether the loop was successful
+success = ~any(eig(X) < 0);
+
+end
