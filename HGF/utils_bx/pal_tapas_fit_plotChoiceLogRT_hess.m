@@ -102,9 +102,9 @@ fill([ts(2:end), fliplr(ts(2:end))], [(hess_ub)', fliplr((hess_lb)')], ...
 hold all;
 plot(ts(2:end), rt_data, 'k-', 'LineWidth', 1);
 plot(ts(2:end), mean(rt_sims, 2), 'r', 'LineWidth', 2);
-plot(ts(2:end), yhat(:, 2), 'b--', 'LineWidth', 2);
+%plot(ts(2:end), yhat(:, 2), 'b--', 'LineWidth', 2);
 xlim([0 ts(end)]);
-title('Reaction times: actual RT (thin black), mean sim RT (red), analytic RT (blue dashed), 90% credible interval from Hessian samples (blue shade)', 'FontWeight', 'bold');
+title('Reaction times: actual RT (thin black), mean sim RT (red), 90% credible interval from Hessian samples (blue shade)', 'FontWeight', 'bold');
 ylabel('Log Reaction Time (ms)');
 xlabel({'Trial number', ' '}); % A hack to get the relative subplot sizes right
 hold off;
