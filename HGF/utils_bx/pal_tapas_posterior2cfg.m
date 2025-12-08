@@ -27,8 +27,25 @@ if do_prc
     if ~strcmp(posterior.c_prc.model, prc_config.model)
         error('ERROR: model in posterior different from model in prc_config')
     end
-    prc_config.priormus(:) = round(posterior.prc_ptrans_mu(:),round_to);
-    prc_config.priorsas(:) = round(posterior.prc_ptrans_sa(:),round_to);
+    
+    % extract original priors
+    original_mus = prc_config.priormus;
+    original_sas = prc_config.priorsas;
+    % identify which parameters should be updated (free parameters only)
+    is_free = original_sas > 0; % should we give way to < 0 ??? (priorsas always non-negative I hope?)
+    
+    % update ONLY the free parameters
+    new_mus = original_mus;
+    new_sas = original_sas;
+    new_mus(is_free) = round(posterior.prc_ptrans_mu(is_free), round_to);
+    new_sas(is_free) = round(posterior.prc_ptrans_sa(is_free), round_to);
+    
+    % ensure fixed parameters stay fixed (sa = 0)
+    new_sas(~is_free) = original_sas(~is_free);
+    
+    % finally assign prior
+    prc_config.priormus(:) = new_mus(:);
+    prc_config.priorsas(:) = new_sas(:);
     prc_config = tapas_align_priors_fields(prc_config);
     
 end
@@ -37,8 +54,24 @@ if do_obs
     if ~strcmp(posterior.c_obs.model, obs_config.model)
         error('ERROR: model in posterior different from model in obs_config')
     end
-    obs_config.priormus(:) = round(posterior.obs_ptrans_mu(:),round_to);
-    obs_config.priorsas(:) = round(posterior.obs_ptrans_sa(:),round_to);
+
+    % extract original priors
+    original_mus = obs_config.priormus;
+    original_sas = obs_config.priorsas;
+    % identify which parameters should be updated (free parameters only)
+    is_free = original_sas > 0; % should we give way to < 0 ??? (priorsas always non-negative I hope?)
+    
+    % update ONLY the free parameters
+    new_mus = original_mus;
+    new_sas = original_sas;
+    new_mus(is_free) = round(posterior.obs_ptrans_mu(is_free), round_to);
+    new_sas(is_free) = round(posterior.obs_ptrans_sa(is_free), round_to);
+    
+    % ensure fixed parameters stay fixed (sa = 0)
+    new_sas(~is_free) = original_sas(~is_free);
+    
+    obs_config.priormus(:) = new_mus(:);
+    obs_config.priorsas(:) = new_sas(:);
     obs_config = tapas_align_priors_fields(obs_config);
 end
 

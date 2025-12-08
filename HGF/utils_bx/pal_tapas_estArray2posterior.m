@@ -8,6 +8,9 @@ function posterior = pal_tapas_estArray2posterior(ests)
 % get vec of mean and variance from ptrans and pvec
 % turn ptrans into pvec? (wait, priormus are ptrans right?? so maybe redundant)
 
+% current bug: consistent Inf or -Inf returns NaN as the SD, not 0...
+% critical for logkamu(2)=-Inf to get two-level HGF
+
 % important: ests should be in a column; only one dimension
 ests = ests(:);
 
